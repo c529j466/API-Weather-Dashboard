@@ -100,6 +100,34 @@ var lon = "";
     })
 }
 
+  //Pulls in the last searched city from local storage to the page
+  function lastSearched(){
+    cityName = localStorage.getItem("cityname");
+    if (cityName !== null) {
+
+        var cityList = $("<button>");
+        cityList.addClass("list-group-item list-group-item-action");
+        cityList.text(cityName);
+        $("ul").prepend(cityList);
+        weatherInfo()
+    }
+}
+
+    // Creates buttons once a user searchs a city to pull up the information of that city 
+    function cityButtons() {
+        cityName = $("input").val().trim();
+        var cityList = $("<button>");
+        cityList.addClass("list-group-item list-group-item-action");
+        cityList.text(cityName);
+        $("ul").prepend(cityList);
+        $("input").val("");
+
+        // Calls previous function to pull in weather info once city buttons are clicked
+        weatherInfo();
+    }
+    // Calls functions to load the info for the last searched city to the page
+    lastSearched();
+
 
 
 
