@@ -28,6 +28,81 @@ var lon = "";
    })
 }
 
+ // Function using latitude and longitude to pulling weather details and then appending them to the html doc
+ function detailedWeatherCall(la,lo) {
+    var queryURL2 = "https://api.openweathermap.org/data/2.5/onecall?lat=" + la + "&lon=" + lo + "&exclude=minutely,hourly&appid=aec299195260a001b09706b5bfe740f7&units=imperial";
+
+    $.ajax({
+        url: queryURL2,
+        method: "GET"
+    }).then(function (response) {
+        console.log(response);
+
+        // Sets the icon of the current weather to the cards
+        $(".card-deck").empty();
+        var icon = response.current.weather[0].icon;
+        var iconImg = $("<img>");
+        iconImg.addClass("img-fluid");
+        iconImg.attr("src", "https://openweathermap.org/img/wn/" + icon + "@2x.png")
+        $("#city").append(iconImg);
+
+        // Sets color of UV Index based on how high or low it is
+        var uvi = parseInt(response.current.uvi);
+        if (uvi <= 2) {
+            $(".color").css({ "background-color": "green", "color": "white" });
+        } else if (uvi >= 3 && uvi <= 5) {
+            $(".color").css({ "background-color": "yellow", "color": "black" });
+        } else if (uvi >= 6 && uvi <= 7) {
+            $(".color").css({ "background-color": "orange" });
+        } else if (uvi >= 8 && uvi <= 10) {
+            $(".color").css({ "background-color": "red", "color": "white" });
+        } else if (uvi >= 11) {
+            $(".color").css({ "background-color": "violet", "color": "white" });
+        }
+
+        // Sets weather data to html doc
+        $("#temp").text("Temperature: " + response.current.temp + "° F");
+        $("#humidity").text("Humidity: " + response.current.humidity + "%");
+        $("#wind").text("Wind Speed: " + response.current.wind_speed + " MPH");
+        $(".color").text(response.current.uvi);
+        $("#current").css({"display":"block"});
+
+        //Sets daily array from calls response to a variable
+        var daily = response.daily;
+
+        //loops through daily array, starting at 1 to exclude current day and taking off 6th and 7th day to give five day forecast
+        for (i = 1; i < daily.length - 2; i++) {
+            
+            // Sets info to variables, creates html elements, and then appends them to the html doc 
+            var Date = moment.unix(daily[i].dt).format("dddd MM/DD/YYYY");
+            var Temp = daily[i].temp.day;
+            var Hum = daily[i].humidity;
+            var dailyIcon = daily[i].weather[0].icon;
+            var weatherDiv = $("<div class='card text-white bg-primary p-2'>")
+            var pTemp = $("<p>");
+            var pHum = $("<p>");
+            var imgIcon = $("<img>");
+            var hDate = $("<h6>");
+            hDate.text(Date);
+            imgIcon.attr("src", "https://openweathermap.org/img/wn/" + dailyIcon + "@2x.png")
+            imgIcon.addClass("img-fluid");
+            imgIcon.css({"width": "100%"});
+            pTemp.text("Temp: " + Temp + "° F");
+            pHum.text("Humidity: " + Hum + "%");
+            weatherDiv.append(hDate);
+            weatherDiv.append(imgIcon);
+            weatherDiv.append(pTemp);
+            weatherDiv.append(pHum);
+            $(".card-deck").append(weatherDiv);
+            $("#five-day").css({"display":"block"});
+        }
+
+    })
+}
+
+
+
+
     // Event Listener for form submit
     $("#city-form").submit(function (event) {
         event.preventDefault();
