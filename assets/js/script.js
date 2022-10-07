@@ -28,3 +28,23 @@ var lon = "";
    })
 }
 
+    // Event Listener for form submit
+    $("#city-form").submit(function (event) {
+        event.preventDefault();
+        cityButtons();
+    })
+
+    // Event listener for search button click
+    $("#form-submit").click(function (event) {
+        event.preventDefault();
+        cityButtons();
+    })
+
+    // Event listener for city buttons
+    $("ul").on("click", "button", function () {
+        cityName = $(this).text();
+        console.log(cityName);
+
+        weatherInfo();
+    })
+
